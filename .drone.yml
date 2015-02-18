@@ -6,6 +6,7 @@ env:
   - PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 script:
   - pwd
+  - whoami
   - ls -l
   - printenv
   - scripts/prepare_build_environment.sh
