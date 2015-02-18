@@ -12,7 +12,4 @@ publish:
     access_key: $$AWS_KEY
     secret_key: $$AWS_SECRET
     source: output/
-    target: kernel/$DRONE_BRANCH/
-    recursive: true
-    when:
-      owner: drone
+    target: kernel/
