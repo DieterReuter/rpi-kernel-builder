@@ -1,0 +1,14 @@
+image: go1.3
+git:
+  path: github.com/hypriot/rpi-kernel-builder
+env:
+  - GOROOT=/usr/local/go
+  - PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+script:
+  - pwd
+  - ls -l
+  - printenv
+notify:
+  email:
+    recipients:
+      - scherer@hypriot.com
