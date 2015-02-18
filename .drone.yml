@@ -13,3 +13,4 @@ publish:
     secret_key: $$AWS_SECRET
     source: output/
     target: kernel/
+    recursive: true
