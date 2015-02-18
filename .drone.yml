@@ -8,6 +8,8 @@ script:
   - pwd
   - ls -l
   - printenv
+  - scripts/prepare_build_environment.sh
+  - scripts/compile_kernel.sh
 notify:
   email:
     recipients:
