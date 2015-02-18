@@ -32,9 +32,9 @@ end
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   # a private network is needed for using NFS
-  config.vm.network :private_network, ip: '192.168.50.50'
-  config.vm.synced_folder ".", "/vagrant", type: "nfs", mount_options: ['rw', 'vers=3', 'tcp']
-#   config.bindfs.bind_folder "/vagrant", "/vagrant"
+#  config.vm.network :private_network, ip: '192.168.50.50'
+#  config.vm.synced_folder ".", "/vagrant", type: "nfs", mount_options: ['rw', 'vers=3', 'tcp']
+#  config.bindfs.bind_folder "/vagrant", "/vagrant"
   config.vm.define "docker-raspbian" do |config|
     config.vm.hostname = "docker-raspbian"
     config.ssh.forward_agent = true
