@@ -9,8 +9,8 @@ publish:
     acl: public-read
     region: eu-central-1
     bucket: buildserver-production
-    access_key: $$AWS_KEY
-    secret_key: $$AWS_SECRET
+    access_key: $$AWS_ACCESS_KEY_ID
+    secret_key: $$AWS_SECRET_ACCESS_KEY
     source: output/
     target: kernel/
     recursive: true
