@@ -1,0 +1,16 @@
+image: bradrydzewski/base
+git:
+  path: github.com/hypriot/rpi-kernel-builder
+script:
+  - scripts/prepare_build_environment.sh
+  - scripts/compile_kernel.sh
+publish:
+  s3:
+    acl: public-read
+    region: eu-central-1
+    bucket: buildserver-production
+    access_key: $$AWS_KEY
+    secret_key: $$AWS_SECRET
+    source: output/
+    target: kernel/
+    recursive: true
