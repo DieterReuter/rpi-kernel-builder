@@ -18,13 +18,22 @@ These configuration files are created from an initial `make menuconfig` and acti
 
 ### Kernel deb packages
 
-The five kernel deb packages are uploaded to S3 bucket `s3://buildserver-production/kernel/`.
+The five kernel deb packages are uploaded to S3 bucket `s3://buildserver-production/kernel/<date-time>/`.
 
 * `libraspberrypi-bin_<date-time>_armhf.deb`
 * `libraspberrypi-dev_<date-time>_armhf.deb`
 * `libraspberrypi-doc_<date-time>_armhf.deb`
 * `libraspberrypi0_<date-time>_armhf.deb`
 * `raspberrypi-bootloader_<date-time>_armhf.deb`
+* `kernel-commit.txt`
+* `linux-firmware-image-3.18.7+_3.18.7+-5_armel.deb`
+* `linux-firmware-image-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
+* `linux-headers-3.18.7+_3.18.7+-5_armel.deb`
+* `linux-headers-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
+* `linux-image-3.18.7+_3.18.7+-5_armel.deb`
+* `linux-image-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
+* `linux-libc-dev_3.18.7+-5_armel.deb`
+* `linux-libc-dev_3.18.7-v7+-6_armel.deb`
 
 ## Build with Vagrant
 
