@@ -43,6 +43,32 @@ To build the SD card image locally with Vagrant and VirtualBox, enter
 vagrant up
 ```
 
+### Recompile kernel
+
+Only on first boot the kernel will be compiled automatically.
+If you want to compile again, use these steps:
+
+```bash
+vagrant up
+vagrant ssh
+sudo su
+/vagrant/scripts/compile_kernel.sh
+```
+
+### Update kernel configs
+
+To update the two kernel config files you can use this steps.
+
+```bash
+vagrant up
+vagrant ssh
+sudo su
+MENUCONFIG=1 /vagrant/scripts/compile_kernel.sh
+```
+
+This will only call the `make menuconfig` inside the toolchain and copies the updated kernel configs back to `kernel_configs/` folder to be committed to the GitHub repo.
+
+
 ## Build with Drone
 
 Add this GitHub repo to the Drone CI server. Then customize the project settings as follows.
