@@ -43,6 +43,18 @@ To build the SD card image locally with Vagrant and VirtualBox, enter
 vagrant up
 ```
 
+### Recompile kernel
+
+Only on first boot the kernel will be compiled automatically.
+If you want to compile again, use these steps:
+
+```bash
+vagrant up
+vagrant ssh
+sudo su
+/vagrant/scripts/compile_kernel.sh
+```
+
 ### Update kernel configs
 
 To update the two kernel config files you can use this steps.
