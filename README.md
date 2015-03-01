@@ -80,3 +80,4 @@ For uploading the build results to Amazon S3 we need the following Amazon S3 cre
 
 * `AWS_ACCESS_KEY_ID: your_aws_key`
 * `AWS_SECRET_ACCESS_KEY: your_secret_access_key`
+
