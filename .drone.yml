@@ -1,4 +1,4 @@
-image: bradrydzewski/base
+image: hypriot/kernelbuilder_base
 git:
   path: github.com/hypriot/rpi-kernel-builder
 script:
