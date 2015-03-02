@@ -10,7 +10,7 @@ publish:
     bucket: buildserver-production
     access_key: $$AWS_ACCESS_KEY_ID
     secret_key: $$AWS_SECRET_ACCESS_KEY
-    source: $$FINAL_BUILD_RESULTS/../
+    source: output/**
     target: kernel/
     recursive: true
 cache:
