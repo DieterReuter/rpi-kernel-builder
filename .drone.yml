@@ -3,6 +3,8 @@ git:
   path: github.com/hypriot/rpi-kernel-builder
 script:
   - scripts/prepare_build_environment.sh
+  - echo "install awscli"
+  - apt-get install -y awscli  1> /dev/null 2> /dev/null
   - scripts/compile_kernel.sh
 publish:
   s3:
