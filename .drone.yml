@@ -1,9 +1,7 @@
-image: hypriot/kernelbuilder_base
+image: hypriot/drone_builder_base
 git:
   path: github.com/hypriot/rpi-kernel-builder
 script:
-  # - scripts/prepare_build_environment.sh
-  - apt-get update && apt-get install -y python python-pip
   - scripts/compile_kernel.sh
 publish:
   s3:
