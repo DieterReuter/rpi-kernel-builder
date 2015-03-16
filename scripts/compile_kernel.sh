@@ -37,10 +37,12 @@ X64_CROSS_COMPILE_CHAIN=arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64
 declare -A CCPREFIX
 CCPREFIX["rpi1"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
 CCPREFIX["rpi2"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
+CCPREFIX["qemu"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
 
 declare -A IMAGE_NAME
 IMAGE_NAME["rpi1"]=kernel.img
 IMAGE_NAME["rpi2"]=kernel7.img
+IMAGE_NAME["qemu"]=kernel-qemu.img
 
 function create_dir_for_build_user () {
     local target_dir=$1
@@ -142,12 +144,14 @@ create_kernel_for () {
   rm -f $BUILD_RESULTS/$PI_VERSION/modules/lib/modules/*/build
   rm -f $BUILD_RESULTS/$PI_VERSION/modules/lib/modules/*/source
 
-  echo "### building deb packages"
-  KBUILD_DEBARCH=armhf ARCH=arm CROSS_COMPILE=${CCPREFIX[${PI_VERSION}]} make deb-pkg
-  mv ../*.deb $BUILD_RESULTS
+  if [ "$PI_VERSION" != "qemu" ]; then
+    echo "### building deb packages"
+    KBUILD_DEBARCH=armhf ARCH=arm CROSS_COMPILE=${CCPREFIX[${PI_VERSION}]} make deb-pkg
+    mv ../*.deb $BUILD_RESULTS
+  fi
   echo "###############"
   echo "### END building kernel for ${PI_VERSION}"
-  echo "### Check the $BUILD_RESULTS/$PI_VERSION/kernel.img and $BUILD_RESULTS/$PI_VERSION/modules directory on your host machine."
+  echo "### Check the $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]} and $BUILD_RESULTS/$PI_VERSION/modules directory on your host machine."
 }
 
 function create_kernel_deb_packages () {
@@ -170,8 +174,10 @@ function create_kernel_deb_packages () {
   touch $NEW_KERNEL/debian/files
 
   for pi_version in ${!CCPREFIX[@]}; do
-    cp $BUILD_RESULTS/$pi_version/${IMAGE_NAME[${pi_version}]} $NEW_KERNEL/boot
-    cp -R $BUILD_RESULTS/$pi_version/modules/lib/modules/* $NEW_KERNEL/modules
+    if [ "$PI_VERSION" != "qemu" ]; then
+      cp $BUILD_RESULTS/$pi_version/${IMAGE_NAME[${pi_version}]} $NEW_KERNEL/boot
+      cp -R $BUILD_RESULTS/$pi_version/modules/lib/modules/* $NEW_KERNEL/modules
+    fi
   done
   # build debian packages
   cd $NEW_KERNEL
@@ -219,6 +225,7 @@ echo "### Copy deb packages to $FINAL_BUILD_RESULTS"
 mkdir -p $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.deb $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.txt $FINAL_BUILD_RESULTS
+cp $BUILD_RESULTS/qemu/${IMAGE_NAME["qemu"]} $FINAL_BUILD_RESULTS
 
 ls -lh $FINAL_BUILD_RESULTS
 echo "*** kernel build done"
