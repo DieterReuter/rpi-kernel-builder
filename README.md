@@ -83,6 +83,12 @@ For the variable `ONLY_BUILD` the values `rpi1`, `rpi2` and `qemu` are supported
 
 You also can combine this with `MENUCONFIG=1` to run `make menuconfig` only for this kernel.
 
+### Build qemu kernel config
+
+```bash
+ONLY_BUILD=qemu MENUCONFIG=1 VERSATILE=1 /vagrant/scripts/compile_kernel.sh
+```
+
 ## Build with Drone
 
 Add this GitHub repo to the Drone CI server. Then customize the project settings as follows.

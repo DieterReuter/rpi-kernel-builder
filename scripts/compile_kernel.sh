@@ -126,6 +126,15 @@ create_kernel_for () {
   mkdir -p $BUILD_RESULTS/$PI_VERSION
   echo $KERNEL_COMMIT > $BUILD_RESULTS/kernel-commit.txt
   if [ ! -z "${MENUCONFIG}" ]; then
+    if [ "$PI_VERSION" == "qemu" ]; then
+      if [ ! -z "$VERSATILE" ]; then
+        echo "### make versatile_defconfig"
+        patch -p1 -d . < /vagrant/kernel_configs/linux-qemu-linux-arm.patch
+        rm -f $LINUX_KERNEL/.config
+        make ARCH=arm clean
+        make ARCH=arm versatile_defconfig
+      fi
+    fi
     echo "### starting menuconfig"
     ARCH=arm CROSS_COMPILE=${CCPREFIX[$PI_VERSION]} make menuconfig
     echo "### saving new config back to $LINUX_KERNEL_CONFIGS/${PI_VERSION}_docker_kernel_config"
