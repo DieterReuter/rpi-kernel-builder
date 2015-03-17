@@ -205,7 +205,17 @@ prepare_kernel_building
 
 # create kernel, associated modules
 for pi_version in ${!CCPREFIX[@]}; do
-  create_kernel_for $pi_version
+  build=1
+  if [ ! -z "${ONLY_BUILD}" ]; then
+    build=0
+    if [ "${ONLY_BUILD}" == "$pi_version" ]; then
+      build=1
+    fi
+  fi
+
+  if [ $build -eq 1 ]; then
+    create_kernel_for $pi_version
+  fi
 done
 
 # create kernel packages

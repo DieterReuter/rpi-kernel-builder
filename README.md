@@ -68,6 +68,20 @@ MENUCONFIG=1 /vagrant/scripts/compile_kernel.sh
 
 This will only call the `make menuconfig` inside the toolchain and copies the updated kernel configs back to `kernel_configs/` folder to be committed to the GitHub repo.
 
+### Build only one kernel
+
+To build only one of the three kernels you can use these steps.
+
+```bash
+vagrant up
+vagrant ssh
+sudo su
+ONLY_BUILD=qemu /vagrant/scripts/compile_kernel.sh
+```
+
+For the variable `ONLY_BUILD` the values `rpi1`, `rpi2` and `qemu` are supported.
+
+You also can combine this with `MENUCONFIG=1` to run `make menuconfig` only for this kernel.
 
 ## Build with Drone
 
