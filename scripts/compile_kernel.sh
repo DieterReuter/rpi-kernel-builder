@@ -102,10 +102,10 @@ function prepare_kernel_building () {
 
 
 create_kernel_for () {
+  local PI_VERSION=$1
+
   echo "###############"
   echo "### START building kernel for ${PI_VERSION}"
-
-  local PI_VERSION=$1
 
   cd $LINUX_KERNEL
 
