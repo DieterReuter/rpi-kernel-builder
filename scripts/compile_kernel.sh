@@ -37,7 +37,7 @@ X64_CROSS_COMPILE_CHAIN=arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64
 declare -A CCPREFIX
 CCPREFIX["rpi1"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
 CCPREFIX["rpi2"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
-CCPREFIX["qemu"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
+CCPREFIX["qemu"]=/usr/bin/arm-linux-gnueabihf-
 
 declare -A IMAGE_NAME
 IMAGE_NAME["rpi1"]=kernel.img
@@ -106,11 +106,18 @@ create_kernel_for () {
 
   echo "###############"
   echo "### START building kernel for ${PI_VERSION}"
+  echo "### Using CROSS_COMPILE = ${CCPREFIX[$PI_VERSION]}"
 
   cd $LINUX_KERNEL
 
   # add kernel branding for hyprOS
   sed -i 's/^EXTRAVERSION =.*/EXTRAVERSION = -hypriotos/g' Makefile
+  # patch kernel header for qemu build
+  if [ "$PI_VERSION" == "qemu" ]; then
+    # install standard gcc cross compiler for ARM qemu
+    apt-get install -y gcc-arm-linux-gnueabihf
+    sed -i 's/40803/40802/g' arch/arm/kernel/asm-offsets.c
+  fi
 
   # save git commit id of this build
   local KERNEL_COMMIT=`git rev-parse HEAD`
