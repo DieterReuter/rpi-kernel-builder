@@ -151,8 +151,15 @@ create_kernel_for () {
     cp $LINUX_KERNEL/.config $LINUX_KERNEL_CONFIGS/${PI_VERSION}_docker_kernel_config
     return
   fi
-  ARCH=arm CROSS_COMPILE=${CCPREFIX[$PI_VERSION]} make -j$NUM_CPUS -k
+  if [ "$PI_VERSION" == "qemu" ]; then
+    make ARCH=arm -j$NUM_CPUS -k
+  else
+    ARCH=arm CROSS_COMPILE=${CCPREFIX[$PI_VERSION]} make -j$NUM_CPUS -k
+  fi
   cp $LINUX_KERNEL/arch/arm/boot/Image $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}
+  if [ "$PI_VERSION" == "qemu" ]; then
+    cp $LINUX_KERNEL/arch/arm/boot/zImage $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}-zImage
+  fi
 
   echo "### building kernel modules"
   mkdir -p $BUILD_RESULTS/$PI_VERSION/modules
@@ -254,7 +261,7 @@ echo "### Copy deb packages to $FINAL_BUILD_RESULTS"
 mkdir -p $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.deb $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.txt $FINAL_BUILD_RESULTS
-cp $BUILD_RESULTS/qemu/${IMAGE_NAME["qemu"]} $FINAL_BUILD_RESULTS
+cp $BUILD_RESULTS/qemu/${IMAGE_NAME["qemu"]}* $FINAL_BUILD_RESULTS
 
 ls -lh $FINAL_BUILD_RESULTS
 echo "*** kernel build done"
