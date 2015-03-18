@@ -42,7 +42,7 @@ CCPREFIX["qemu"]=/usr/bin/arm-linux-gnueabihf-
 declare -A IMAGE_NAME
 IMAGE_NAME["rpi1"]=kernel.img
 IMAGE_NAME["rpi2"]=kernel7.img
-IMAGE_NAME["qemu"]=kernel-qemu.img
+IMAGE_NAME["qemu"]=kernel-qemu
 
 function create_dir_for_build_user () {
     local target_dir=$1
@@ -158,9 +158,10 @@ create_kernel_for () {
   else
     ARCH=arm CROSS_COMPILE=${CCPREFIX[$PI_VERSION]} make -j$NUM_CPUS -k
   fi
-  cp $LINUX_KERNEL/arch/arm/boot/Image $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}
   if [ "$PI_VERSION" == "qemu" ]; then
-    cp $LINUX_KERNEL/arch/arm/boot/zImage $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}-zImage
+    cp $LINUX_KERNEL/arch/arm/boot/zImage $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}
+  else
+    cp $LINUX_KERNEL/arch/arm/boot/Image $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}
   fi
 
   echo "### building kernel modules"
