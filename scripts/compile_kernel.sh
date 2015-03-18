@@ -264,7 +264,7 @@ echo "### Copy deb packages to $FINAL_BUILD_RESULTS"
 mkdir -p $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.deb $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.txt $FINAL_BUILD_RESULTS
-cp $BUILD_RESULTS/qemu/${IMAGE_NAME["qemu"]}* $FINAL_BUILD_RESULTS
+cp $BUILD_RESULTS/qemu/${IMAGE_NAME["qemu"]} $FINAL_BUILD_RESULTS
 
 ls -lh $FINAL_BUILD_RESULTS
 echo "*** kernel build done"
