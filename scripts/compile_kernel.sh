@@ -134,7 +134,7 @@ create_kernel_for () {
   echo $KERNEL_COMMIT > $BUILD_RESULTS/kernel-commit.txt
   if [ "$PI_VERSION" == "qemu" ]; then
     echo "### patching kernel configs for qemu"
-    patch -p1 -d . < /vagrant/kernel_configs/linux-qemu-linux-arm.patch
+    patch -p1 -d . < $LINUX_KERNEL_CONFIGS/linux-qemu-linux-arm.patch
   fi
   if [ ! -z "${MENUCONFIG}" ]; then
     if [ "$PI_VERSION" == "qemu" ]; then
