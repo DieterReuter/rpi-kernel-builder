@@ -134,9 +134,10 @@ create_kernel_for () {
   echo $KERNEL_COMMIT > $BUILD_RESULTS/kernel-commit.txt
   if [ ! -z "${MENUCONFIG}" ]; then
     if [ "$PI_VERSION" == "qemu" ]; then
+      echo "### patching kernel configs for qemu"
+      patch -p1 -d . < /vagrant/kernel_configs/linux-qemu-linux-arm.patch
       if [ ! -z "$VERSATILE" ]; then
         echo "### make versatile_defconfig"
-        patch -p1 -d . < /vagrant/kernel_configs/linux-qemu-linux-arm.patch
         rm -f $LINUX_KERNEL/.config
         make ARCH=arm clean
         make ARCH=arm versatile_defconfig
