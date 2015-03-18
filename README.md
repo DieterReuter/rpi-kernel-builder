@@ -26,14 +26,15 @@ The five kernel deb packages are uploaded to S3 bucket `s3://buildserver-product
 * `libraspberrypi0_<date-time>_armhf.deb`
 * `raspberrypi-bootloader_<date-time>_armhf.deb`
 * `kernel-commit.txt`
-* `linux-firmware-image-3.18.7+_3.18.7+-5_armel.deb`
-* `linux-firmware-image-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
-* `linux-headers-3.18.7+_3.18.7+-5_armel.deb`
-* `linux-headers-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
-* `linux-image-3.18.7+_3.18.7+-5_armel.deb`
-* `linux-image-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
-* `linux-libc-dev_3.18.7+-5_armel.deb`
-* `linux-libc-dev_3.18.7-v7+-6_armel.deb`
+* `kernel-qemu.img`
+* `linux-firmware-image-3.18.9+_3.18.9+-5_armel.deb`
+* `linux-firmware-image-3.18.9-v7+_3.18.9-v7+-6_armel.deb`
+* `linux-headers-3.18.9+_3.18.9+-5_armel.deb`
+* `linux-headers-3.18.9-v7+_3.18.9-v7+-6_armel.deb`
+* `linux-image-3.18.9+_3.18.9+-5_armel.deb`
+* `linux-image-3.18.9-v7+_3.18.9-v7+-6_armel.deb`
+* `linux-libc-dev_3.18.9+-5_armel.deb`
+* `linux-libc-dev_3.18.9-v7+-6_armel.deb`
 
 ## Build with Vagrant
 
