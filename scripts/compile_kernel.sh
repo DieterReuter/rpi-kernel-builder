@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 NUM_CPUS=`nproc`
 echo "###############"
@@ -63,7 +64,9 @@ function clone_or_update_repo_for () {
     rm -rf $repo_path
   fi
   if [ -d ${repo_path}/.git ]; then
-    cd $repo_path && git pull
+    cd $repo_path
+    git reset --hard HEAD
+    git pull
   else
     echo "Cloning $repo_path with commit $repo_commit"
     git clone --depth 1 $repo_url $repo_path
@@ -81,6 +84,8 @@ function setup_arm_cross_compiler_toolchain () {
 function setup_linux_kernel_sources () {
   echo "### Check if Raspberry Pi Linux Kernel repository at ${LINUX_KERNEL} is still up to date"
   clone_or_update_repo_for 'https://github.com/raspberrypi/linux.git' $LINUX_KERNEL $LINUX_KERNEL_COMMIT
+  echo "### Cleaning .version file for deb packages"
+  rm -f $LINUX_KERNEL/.version
 }
 
 function setup_rpi_firmware () {
@@ -186,6 +191,11 @@ function create_kernel_deb_packages () {
 ###  main  ###
 ##############
 
+echo "*** all parameters are set ***"
+echo "*** the kernel timestamp is: $NEW_VERSION ***"
+echo "#############################################"
+
+
 # setup necessary build environment: dir, repos, etc.
 prepare_kernel_building
 
@@ -211,3 +221,6 @@ echo "### Copy deb packages to $FINAL_BUILD_RESULTS"
 mkdir -p $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.deb $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.txt $FINAL_BUILD_RESULTS
+
+ls -lh $FINAL_BUILD_RESULTS
+echo "*** kernel build done"
