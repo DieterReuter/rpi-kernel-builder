@@ -117,6 +117,7 @@ create_kernel_for () {
   # patch kernel header for qemu build
   if [ "$PI_VERSION" == "qemu" ]; then
     # install standard gcc cross compiler for ARM qemu
+    apt-get update
     apt-get install -y gcc-arm-linux-gnueabihf
     sed -i 's/40803/40802/g' arch/arm/kernel/asm-offsets.c
   fi
