@@ -32,8 +32,8 @@ end
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.synced_folder ".", "/vagrant"
-  config.vm.define "docker-raspbian" do |config|
-    config.vm.hostname = "docker-raspbian"
+  config.vm.define "rpi-kernel-builder" do |config|
+    config.vm.hostname = "rpi-kernel-builder"
     config.ssh.forward_agent = true
     config.vm.provision "shell", path: "scripts/provision.sh", privileged: false
     config.vm.provider "virtualbox" do |vb|

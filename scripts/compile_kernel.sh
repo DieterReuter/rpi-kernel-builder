@@ -37,10 +37,12 @@ X64_CROSS_COMPILE_CHAIN=arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64
 declare -A CCPREFIX
 CCPREFIX["rpi1"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
 CCPREFIX["rpi2"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
+CCPREFIX["qemu"]=/usr/bin/arm-linux-gnueabihf-
 
 declare -A IMAGE_NAME
 IMAGE_NAME["rpi1"]=kernel.img
 IMAGE_NAME["rpi2"]=kernel7.img
+IMAGE_NAME["qemu"]=kernel-qemu
 
 function create_dir_for_build_user () {
     local target_dir=$1
@@ -102,15 +104,23 @@ function prepare_kernel_building () {
 
 
 create_kernel_for () {
+  local PI_VERSION=$1
+
   echo "###############"
   echo "### START building kernel for ${PI_VERSION}"
-
-  local PI_VERSION=$1
+  echo "### Using CROSS_COMPILE = ${CCPREFIX[$PI_VERSION]}"
 
   cd $LINUX_KERNEL
 
   # add kernel branding for hyprOS
   sed -i 's/^EXTRAVERSION =.*/EXTRAVERSION = -hypriotos/g' Makefile
+  # patch kernel header for qemu build
+  if [ "$PI_VERSION" == "qemu" ]; then
+    # install standard gcc cross compiler for ARM qemu
+    sudo apt-get update
+    sudo apt-get install -y gcc-arm-linux-gnueabihf
+    sed -i 's/40803/40802/g' arch/arm/kernel/asm-offsets.c
+  fi
 
   # save git commit id of this build
   local KERNEL_COMMIT=`git rev-parse HEAD`
@@ -125,15 +135,35 @@ create_kernel_for () {
   echo "### building kernel"
   mkdir -p $BUILD_RESULTS/$PI_VERSION
   echo $KERNEL_COMMIT > $BUILD_RESULTS/kernel-commit.txt
+  if [ "$PI_VERSION" == "qemu" ]; then
+    echo "### patching kernel configs for qemu"
+    patch -p1 -d . < $LINUX_KERNEL_CONFIGS/linux-qemu-linux-arm.patch
+  fi
   if [ ! -z "${MENUCONFIG}" ]; then
+    if [ "$PI_VERSION" == "qemu" ]; then
+      if [ ! -z "$VERSATILE" ]; then
+        echo "### make versatile_defconfig"
+        rm -f $LINUX_KERNEL/.config
+        make ARCH=arm clean
+        make ARCH=arm versatile_defconfig
+      fi
+    fi
     echo "### starting menuconfig"
     ARCH=arm CROSS_COMPILE=${CCPREFIX[$PI_VERSION]} make menuconfig
     echo "### saving new config back to $LINUX_KERNEL_CONFIGS/${PI_VERSION}_docker_kernel_config"
     cp $LINUX_KERNEL/.config $LINUX_KERNEL_CONFIGS/${PI_VERSION}_docker_kernel_config
     return
   fi
-  ARCH=arm CROSS_COMPILE=${CCPREFIX[$PI_VERSION]} make -j$NUM_CPUS -k
-  cp $LINUX_KERNEL/arch/arm/boot/Image $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}
+  if [ "$PI_VERSION" == "qemu" ]; then
+    make ARCH=arm -j$NUM_CPUS -k
+  else
+    ARCH=arm CROSS_COMPILE=${CCPREFIX[$PI_VERSION]} make -j$NUM_CPUS -k
+  fi
+  if [ "$PI_VERSION" == "qemu" ]; then
+    cp $LINUX_KERNEL/arch/arm/boot/zImage $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}
+  else
+    cp $LINUX_KERNEL/arch/arm/boot/Image $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]}
+  fi
 
   echo "### building kernel modules"
   mkdir -p $BUILD_RESULTS/$PI_VERSION/modules
@@ -144,12 +174,14 @@ create_kernel_for () {
   rm -f $BUILD_RESULTS/$PI_VERSION/modules/lib/modules/*/build
   rm -f $BUILD_RESULTS/$PI_VERSION/modules/lib/modules/*/source
 
-  echo "### building deb packages"
-  KBUILD_DEBARCH=armhf ARCH=arm CROSS_COMPILE=${CCPREFIX[${PI_VERSION}]} make deb-pkg
-  mv ../*.deb $BUILD_RESULTS
+  if [ "$PI_VERSION" != "qemu" ]; then
+    echo "### building deb packages"
+    KBUILD_DEBARCH=armhf ARCH=arm CROSS_COMPILE=${CCPREFIX[${PI_VERSION}]} make deb-pkg
+    mv ../*.deb $BUILD_RESULTS
+  fi
   echo "###############"
   echo "### END building kernel for ${PI_VERSION}"
-  echo "### Check the $BUILD_RESULTS/$PI_VERSION/kernel.img and $BUILD_RESULTS/$PI_VERSION/modules directory on your host machine."
+  echo "### Check the $BUILD_RESULTS/$PI_VERSION/${IMAGE_NAME[${PI_VERSION}]} and $BUILD_RESULTS/$PI_VERSION/modules directory on your host machine."
 }
 
 function create_kernel_deb_packages () {
@@ -172,8 +204,10 @@ function create_kernel_deb_packages () {
   touch $NEW_KERNEL/debian/files
 
   for pi_version in ${!CCPREFIX[@]}; do
-    cp $BUILD_RESULTS/$pi_version/${IMAGE_NAME[${pi_version}]} $NEW_KERNEL/boot
-    cp -R $BUILD_RESULTS/$pi_version/modules/lib/modules/* $NEW_KERNEL/modules
+    if [ "$PI_VERSION" != "qemu" ]; then
+      cp $BUILD_RESULTS/$pi_version/${IMAGE_NAME[${pi_version}]} $NEW_KERNEL/boot
+      cp -R $BUILD_RESULTS/$pi_version/modules/lib/modules/* $NEW_KERNEL/modules
+    fi
   done
   # build debian packages
   cd $NEW_KERNEL
@@ -201,7 +235,17 @@ prepare_kernel_building
 
 # create kernel, associated modules
 for pi_version in ${!CCPREFIX[@]}; do
-  create_kernel_for $pi_version
+  build=1
+  if [ ! -z "${ONLY_BUILD}" ]; then
+    build=0
+    if [ "${ONLY_BUILD}" == "$pi_version" ]; then
+      build=1
+    fi
+  fi
+
+  if [ $build -eq 1 ]; then
+    create_kernel_for $pi_version
+  fi
 done
 
 # create kernel packages
@@ -221,6 +265,7 @@ echo "### Copy deb packages to $FINAL_BUILD_RESULTS"
 mkdir -p $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.deb $FINAL_BUILD_RESULTS
 cp $BUILD_RESULTS/*.txt $FINAL_BUILD_RESULTS
+cp $BUILD_RESULTS/qemu/${IMAGE_NAME["qemu"]} $FINAL_BUILD_RESULTS
 
 ls -lh $FINAL_BUILD_RESULTS
 echo "*** kernel build done"

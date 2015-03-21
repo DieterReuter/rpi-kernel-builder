@@ -20,20 +20,22 @@ These configuration files are created from an initial `make menuconfig` and acti
 
 The five kernel deb packages are uploaded to S3 bucket `s3://buildserver-production/kernel/<date-time>/`.
 
+* `kernel-commit.txt`
+* `kernel-qemu`
 * `libraspberrypi-bin_<date-time>_armhf.deb`
 * `libraspberrypi-dev_<date-time>_armhf.deb`
 * `libraspberrypi-doc_<date-time>_armhf.deb`
 * `libraspberrypi0_<date-time>_armhf.deb`
+* `linux-firmware-image-3.18.9-hypriotos+_3.18.9-hypriotos+-1_armhf.deb`
+* `linux-firmware-image-3.18.9-hypriotos-v7+_3.18.9-hypriotos-v7+-2_armhf.deb`
+* `linux-headers-3.18.9-hypriotos+_3.18.9-hypriotos+-1_armhf.deb`
+* `linux-headers-3.18.9-hypriotos-v7+_3.18.9-hypriotos-v7+-2_armhf.deb`
+* `linux-image-3.18.9-hypriotos+_3.18.9-hypriotos+-1_armhf.deb`
+* `linux-image-3.18.9-hypriotos-v7+_3.18.9-hypriotos-v7+-2_armhf.deb`
+* `linux-libc-dev_3.18.9-hypriotos+-1_armhf.deb`
+* `linux-libc-dev_3.18.9-hypriotos-v7+-2_armhf.deb`
 * `raspberrypi-bootloader_<date-time>_armhf.deb`
-* `kernel-commit.txt`
-* `linux-firmware-image-3.18.7+_3.18.7+-5_armel.deb`
-* `linux-firmware-image-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
-* `linux-headers-3.18.7+_3.18.7+-5_armel.deb`
-* `linux-headers-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
-* `linux-image-3.18.7+_3.18.7+-5_armel.deb`
-* `linux-image-3.18.7-v7+_3.18.7-v7+-6_armel.deb`
-* `linux-libc-dev_3.18.7+-5_armel.deb`
-* `linux-libc-dev_3.18.7-v7+-6_armel.deb`
+
 
 ## Build with Vagrant
 
@@ -68,6 +70,26 @@ MENUCONFIG=1 /vagrant/scripts/compile_kernel.sh
 
 This will only call the `make menuconfig` inside the toolchain and copies the updated kernel configs back to `kernel_configs/` folder to be committed to the GitHub repo.
 
+### Build only one kernel
+
+To build only one of the three kernels you can use these steps.
+
+```bash
+vagrant up
+vagrant ssh
+sudo su
+ONLY_BUILD=qemu /vagrant/scripts/compile_kernel.sh
+```
+
+For the variable `ONLY_BUILD` the values `rpi1`, `rpi2` and `qemu` are supported.
+
+You also can combine this with `MENUCONFIG=1` to run `make menuconfig` only for this kernel.
+
+### Build qemu kernel config
+
+```bash
+ONLY_BUILD=qemu MENUCONFIG=1 VERSATILE=1 /vagrant/scripts/compile_kernel.sh
+```
 
 ## Build with Drone
 
