@@ -1,4 +1,4 @@
-image: hypriot/drone_builder_base
+image: hypriot/drone_builder_base:latest
 git:
   path: github.com/hypriot/rpi-kernel-builder
 script:
