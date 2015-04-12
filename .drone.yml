@@ -1,4 +1,4 @@
-image: hypriot/drone_builder_base:latest
+image: registry.hypriot.com/hypriot/drone_builder_base:latest
 git:
   path: github.com/hypriot/rpi-kernel-builder
 script:
@@ -15,3 +15,9 @@ publish:
     recursive: true
 cache:
   - /var/kernel_build/cache
+notify:
+  slack:
+    webhook_url: $$SLACK_WEBHOOK_URL
+    on_started: false
+    on_success: true
+    on_failure: true
