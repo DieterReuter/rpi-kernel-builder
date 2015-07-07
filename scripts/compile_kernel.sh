@@ -15,6 +15,7 @@ ARM_TOOLS=$BUILD_CACHE/tools
 LINUX_KERNEL=$BUILD_CACHE/linux-kernel
 LINUX_KERNEL_COMMIT=""
 # LINUX_KERNEL_COMMIT=1f58c41a5aba262958c2869263e6fdcaa0aa3c00
+# LINUX_KERNEL_COMMIT=038b780d978b2dba2867a84ee5981a607fa328c0 # 4.0.7
 RASPBERRY_FIRMWARE=$BUILD_CACHE/rpi_firmware
 
 if [ -d /vagrant ]; then
@@ -37,12 +38,12 @@ X64_CROSS_COMPILE_CHAIN=arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64
 declare -A CCPREFIX
 CCPREFIX["rpi1"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
 CCPREFIX["rpi2"]=$ARM_TOOLS/$X64_CROSS_COMPILE_CHAIN/bin/arm-linux-gnueabihf-
-CCPREFIX["qemu"]=/usr/bin/arm-linux-gnueabihf-
+#CCPREFIX["qemu"]=/usr/bin/arm-linux-gnueabihf-
 
 declare -A IMAGE_NAME
 IMAGE_NAME["rpi1"]=kernel.img
 IMAGE_NAME["rpi2"]=kernel7.img
-IMAGE_NAME["qemu"]=kernel-qemu
+#IMAGE_NAME["qemu"]=kernel-qemu
 
 function create_dir_for_build_user () {
     local target_dir=$1
