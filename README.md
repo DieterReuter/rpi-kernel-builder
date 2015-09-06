@@ -1,4 +1,5 @@
-[![Build Status](https://builder.hypriot.com/api/badge/github.com/hypriot/rpi-kernel-builder/status.svg?branch=master)](https://builder.hypriot.com/github.com/hypriot/rpi-kernel-builder)
+**DEPRECATED** USE rpi-kernel instead
+
 # rpi-kernel-builder
 
 Build a Raspberry Pi 1 and 2 kernel with all kernel modules running docker.
