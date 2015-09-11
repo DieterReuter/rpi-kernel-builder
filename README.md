@@ -1,4 +1,5 @@
 **DEPRECATED** USE rpi-kernel instead
+**BEFORE DELETE THIS REPO: CHECK IF WE STILL NEED THE QEMU BUILD STEPS**
 
 # rpi-kernel-builder
 
